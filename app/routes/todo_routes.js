@@ -3,6 +3,7 @@ module.exports = function(app, db) {
 
     app.post('/todos', todos.create)
     app.get('/todos', todos.findAll)
+    app.get('/todos/archive', todos.findArchived)
     app.get('/todos/:todoId', todos.findOne)
     app.put('/todos/:todoId', todos.update)
     app.delete('/todos/:todoId', todos.delete)

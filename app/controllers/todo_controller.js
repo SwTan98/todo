@@ -24,7 +24,18 @@ exports.create = (req, res) => {
 }
 
 exports.findAll = (req, res) => {
-    Todo.find()
+    Todo.find({archived:false})
+        .then(todos => {
+            res.send(todos)
+        }).catch(err => {
+            res.status(500).send({
+                message: err.message || 'Some error occurred while retrieving todos.'
+            })
+        })
+}
+
+exports.findArchived = (req, res) => {
+    Todo.find({archived:true})
         .then(todos => {
             res.send(todos)
         }).catch(err => {
@@ -61,9 +72,22 @@ exports.update = (req, res) => {
             message: 'Todo content cannot be empty'
         })
     }
+    if (!req.body.done) {
+        return res.status(400).send({
+            message: 'Todo status cannot be empty'
+        })
+    }
+    if (!req.body.archived) {
+        return res.status(400).send({
+            message: 'Todo archive status cannot be empty'
+        })
+    }
+
     Todo.findByIdAndUpdate(req.params.todoId, {
         title: req.body.title || 'Untitled Todo',
-        content: req.body.content
+        content: req.body.content,
+        done: req.body.done,
+        archived: req.body.archived
     }, { new: true })
         .then(todo => {
             if (!todo) {
