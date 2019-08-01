@@ -1,5 +1,5 @@
-const noteRoutes = require('./note_routes')
+const todoRoutes = require('./todo_routes')
 
 module.exports = function(app, db) {
-    noteRoutes(app, db)
+    todoRoutes(app, db)
 }
