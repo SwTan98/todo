@@ -1,4 +1,4 @@
-module.exports = function(app, db) {
+module.exports = function (app, db) {
     const todos = require('../controllers/todo_controller.js')
 
     app.post('/todos', todos.create)

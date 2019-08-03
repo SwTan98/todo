@@ -24,7 +24,7 @@ exports.create = (req, res) => {
 }
 
 exports.findAll = (req, res) => {
-    Todo.find({archived:false})
+    Todo.find({ archived: false })
         .then(todos => {
             res.send(todos)
         }).catch(err => {
@@ -35,7 +35,7 @@ exports.findAll = (req, res) => {
 }
 
 exports.findArchived = (req, res) => {
-    Todo.find({archived:true})
+    Todo.find({ archived: true })
         .then(todos => {
             res.send(todos)
         }).catch(err => {

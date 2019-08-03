@@ -5,8 +5,6 @@ const TodoSchema = mongoose.Schema({
     content: String,
     done: Boolean,
     archived: Boolean
-}, {
-    timestamps: true
-})
+}, { timestamps: true })
 
 module.exports = mongoose.model('Todo', TodoSchema)
