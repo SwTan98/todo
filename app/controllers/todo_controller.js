@@ -67,45 +67,62 @@ exports.findOne = (req, res) => {
 }
 
 exports.update = (req, res) => {
-    if (!req.body.content) {
-        return res.status(400).send({
-            message: 'Todo content cannot be empty'
-        })
-    }
-    if (!req.body.done) {
-        return res.status(400).send({
-            message: 'Todo status cannot be empty'
-        })
-    }
-    if (!req.body.archived) {
-        return res.status(400).send({
-            message: 'Todo archive status cannot be empty'
-        })
-    }
-
-    Todo.findByIdAndUpdate(req.params.todoId, {
-        title: req.body.title || 'Untitled Todo',
-        content: req.body.content,
-        done: req.body.done,
-        archived: req.body.archived
-    }, { new: true })
-        .then(todo => {
-            if (!todo) {
-                return res.status(404).send({
-                    message: `Todo not found with id ${req.params.todoId}`
+    keys = Object.keys(req.body)
+    if (keys.length == 1 && (keys.includes('done') || keys.includes('archived'))) {
+        if (keys.includes('done')) {
+            Todo.findByIdAndUpdate(req.params.todoId, {
+                done: req.body.done,
+            }, { new: true })
+                .then(todo => {
+                    if (!todo) {
+                        return res.status(404).send({
+                            message: `Todo not found with id ${req.params.todoId}`
+                        })
+                    }
+                    res.send(todo)
                 })
-            }
-            res.send(todo)
-        }).catch(err => {
-            if (err.kind === 'ObjectId') {
-                return res.status(404).send({
-                    message: `Todo not found with id ${req.params.todoId}`
+        } else if (keys.includes('archived')) {
+            Todo.findByIdAndUpdate(req.params.todoId, {
+                archived: req.body.archived,
+            }, { new: true })
+                .then(todo => {
+                    if (!todo) {
+                        return res.status(404).send({
+                            message: `Todo not found with id ${req.params.todoId}`
+                        })
+                    }
+                    res.send(todo)
                 })
-            }
-            return res.status(500).send({
-                message: `Error updating todo with id ${req.params.todoId}`
+        }
+    } else {
+        if (!req.body.content) {
+            return res.status(400).send({
+                message: 'Todo content cannot be empty'
             })
-        })
+        }
+
+        Todo.findByIdAndUpdate(req.params.todoId, {
+            title: req.body.title || 'Untitled Todo',
+            content: req.body.content
+        }, { new: true })
+            .then(todo => {
+                if (!todo) {
+                    return res.status(404).send({
+                        message: `Todo not found with id ${req.params.todoId}`
+                    })
+                }
+                res.send(todo)
+            }).catch(err => {
+                if (err.kind === 'ObjectId') {
+                    return res.status(404).send({
+                        message: `Todo not found with id ${req.params.todoId}`
+                    })
+                }
+                return res.status(500).send({
+                    message: `Error updating todo with id ${req.params.todoId}`
+                })
+            })
+    }
 }
 
 exports.delete = (req, res) => {
